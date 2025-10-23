@@ -28,8 +28,8 @@ Essa "intuição" é chamada de **Função Heurística** (representada por $h(n)
 * **Fórmula de Decisão:** O A\* sempre escolhe o nó com o menor valor de $f(n)$, onde:
     $f(n) = g(n) + h(n)$
 * **Resultado:** O A\* também é **completo** e **ótimo** (assim como o BFS), mas é *drasticamente* mais eficiente. Ao focar sua busca na direção correta, ele visita uma fração dos nós que o BFS visitaria, encontrando a solução muito mais rápido.
-1.  **Busca Cega (Não Informada):** Implementada com o **BFS (Busca em Largura)**.
-2.  **Busca Heurística (Informada):** Implementada com o **A\* (A-Estrela)**.
+
+
 
 O usuário pode desenhar um labirinto, definir um ponto inicial e final, e então executar os dois algoritmos no mesmo problema para comparar visualmente e através de métricas de desempenho.
 
