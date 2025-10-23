@@ -1,7 +1,33 @@
 # Visualizador de Algoritmos de Busca (A* vs. BFS)
 
 Este projeto é uma ferramenta de visualização interativa criada em Python com Pygame. Ele demonstra e compara o funcionamento de dois tipos de algoritmos de busca em Inteligência Artificial:
+## O que são Algoritmos de Busca Cega e Heurística?
 
+Em Inteligência Artificial, um "problema de busca" consiste em encontrar uma sequência de ações (um caminho) de um **Estado Inicial** para um **Estado-Objetivo**. A principal diferença entre as duas abordagens é a quantidade de informação que o algoritmo utiliza para decidir qual caminho explorar.
+
+### 1. Busca Cega (Não Informada)
+
+Como o nome sugere, uma Busca Cega "não enxerga" o objetivo. Ela não tem nenhuma informação sobre o quão "perto" ou "longe" o nó atual está do estado-objetivo. A única coisa que ela pode fazer é seguir uma estratégia de exploração sistemática até encontrar a solução.
+
+* **Analogia:** Tentar sair de um labirinto no escuro total. Você não sabe onde a saída está, então você usa um método fixo, como "explorar cada corredor nível por nível" ou "seguir sempre pela parede da direita".
+* **Algoritmo Implementado:** **Busca em Largura (BFS - Breadth-First Search)**
+* **Como Funciona:** O BFS explora o labirinto em "ondas". Ele visita o nó inicial, depois *todos* os vizinhos do inicial, depois *todos* os vizinhos dos vizinhos, e assim por diante.
+* **Resultado:** O BFS é **completo** (sempre acha o caminho se ele existir) e **ótimo** (sempre acha o caminho com o *menor número de passos*). No entanto, ele é muito ineficiente, pois explora milhares de nós desnecessários que estão na direção errada.
+
+### 2. Busca Heurística (Informada)
+
+Uma Busca Heurística é "informada" porque ela usa uma "pista" ou "intuição" para guiar sua busca, focando nos caminhos que *parecem* estar mais próximos do objetivo.
+
+Essa "intuição" é chamada de **Função Heurística** (representada por $h(n)$). Ela é uma *estimativa* do custo (ou distância) do nó atual ($n$) até o nó-objetivo.
+
+* **Analogia:** Tentar chegar a um ponto de referência (como uma torre) em uma cidade. Você não sabe o caminho exato, mas a cada esquina, você escolhe a rua que *visualmente* te coloca mais perto da torre.
+* **Algoritmo Implementado:** **A\* (A-Estrela)**
+* **Como Funciona:** O A\* é o algoritmo heurístico mais famoso. Ele é "inteligente" porque balanceia dois custos para decidir qual nó explorar:
+    1.  $g(n)$: O custo *real* do caminho desde o início até o nó atual.
+    2.  $h(n)$: A *estimativa* (heurística) do custo do nó atual até o fim.
+* **Fórmula de Decisão:** O A\* sempre escolhe o nó com o menor valor de $f(n)$, onde:
+    $f(n) = g(n) + h(n)$
+* **Resultado:** O A\* também é **completo** e **ótimo** (assim como o BFS), mas é *drasticamente* mais eficiente. Ao focar sua busca na direção correta, ele visita uma fração dos nós que o BFS visitaria, encontrando a solução muito mais rápido.
 1.  **Busca Cega (Não Informada):** Implementada com o **BFS (Busca em Largura)**.
 2.  **Busca Heurística (Informada):** Implementada com o **A\* (A-Estrela)**.
 
