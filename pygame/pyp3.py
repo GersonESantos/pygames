@@ -234,3 +234,124 @@ def desenhar_grade_linhas(tela, linhas, largura_janela):
 
 def desenhar_tudo(tela, grid, linhas, largura_janela):
     tela.fill(BRANCO)
+    
+    for linha in grid:
+        for spot in linha:
+            spot.draw(tela) # Desenha cada Spot com sua cor
+            
+    desenhar_grade_linhas(tela, linhas, largura_janela)
+    pygame.display.update()
+    
+def get_posicao_clicada(pos_mouse, linhas, largura_janela):
+    tamanho_quadrado = largura_janela // linhas
+    x, y = pos_mouse
+    coluna = x // tamanho_quadrado
+    linha = y // tamanho_quadrado
+    
+    if 0 <= linha < linhas and 0 <= coluna < linhas:
+        return linha, coluna
+    return -1, -1
+
+
+# --- 5. Função Principal (Main Loop) ---
+
+def main():
+    pygame.init()
+    TELA = pygame.display.set_mode((LARGURA_JANELA, LARGURA_JANELA))
+    pygame.display.set_caption("Visualizador A* | ESPAÇO = Iniciar | C = Limpar")
+    
+    grid = criar_grid(LINHAS, LARGURA_JANELA)
+    
+    inicio = None
+    fim = None
+    
+    running = True
+    algoritmo_rodando = False # Trava cliques enquanto o algoritmo roda
+    
+    while running:
+        # --- Passamos a função de desenhar para o algoritmo ---
+        desenhar_tudo(TELA, grid, LINHAS, LARGURA_JANELA)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            
+            # --- Trava cliques se o algoritmo estiver rodando ---
+            if algoritmo_rodando:
+                continue 
+            
+            # BOTÃO ESQUERDO (Mesma lógica de antes)
+            if pygame.mouse.get_pressed()[0]:
+                pos_mouse = pygame.mouse.get_pos()
+                linha, col = get_posicao_clicada(pos_mouse, LINHAS, LARGURA_JANELA)
+                if linha == -1: continue 
+
+                spot = grid[linha][col]
+                
+                if not inicio and spot != fim:
+                    inicio = spot
+                    inicio.make_inicio()
+                
+                elif not fim and spot != inicio:
+                    fim = spot
+                    fim.make_fim()
+                    
+                elif spot != fim and spot != inicio:
+                    spot.make_obstaculo()
+
+            # BOTÃO DIREITO (Mesma lógica de antes)
+            elif pygame.mouse.get_pressed()[2]:
+                pos_mouse = pygame.mouse.get_pos()
+                linha, col = get_posicao_clicada(pos_mouse, LINHAS, LARGURA_JANELA)
+                if linha == -1: continue
+                
+                spot = grid[linha][col]
+                spot.reset()
+                if spot == inicio:
+                    inicio = None
+                if spot == fim:
+                    fim = None
+            
+            # --- Eventos de Teclado ---
+            if event.type == pygame.KEYDOWN:
+                
+                # --- NOVO: Lógica da Tecla ESPAÇO ---
+                if event.key == pygame.K_SPACE and inicio and fim:
+                    algoritmo_rodando = True # Trava os cliques
+                    
+                    # 1. Atualiza os vizinhos de TODOS os spots na grade
+                    for linha in grid:
+                        for spot in linha:
+                            spot.update_vizinhos(grid)
+                    
+                    # 2. Chama o algoritmo
+                    pygame.display.set_caption("Visualizador A* | Rodando...")
+                    
+                    # Passamos a função 'desenhar_tudo' como argumento
+                    # Isto é uma "lambda function" que passa os argumentos corretos
+                    sucesso = algoritmo_a_estrela(
+                        lambda: desenhar_tudo(TELA, grid, LINHAS, LARGURA_JANELA), 
+                        grid, 
+                        inicio, 
+                        fim
+                    )
+                    
+                    if sucesso:
+                        pygame.display.set_caption("Visualizador A* | Caminho Encontrado!")
+                    else:
+                        pygame.display.set_caption("Visualizador A* | Caminho não encontrado!")
+                    
+                    algoritmo_rodando = False # Libera os cliques
+
+                # --- Lógica da Tecla C (Limpar) ---
+                if event.key == pygame.K_c:
+                    inicio = None
+                    fim = None
+                    grid = criar_grid(LINHAS, LARGURA_JANELA)
+                    pygame.display.set_caption("Visualizador A* | ESPAÇO = Iniciar | C = Limpar")
+
+    pygame.quit()
+
+# --- Ponto de Entrada do Programa ---
+if __name__ == "__main__":
+    main()
