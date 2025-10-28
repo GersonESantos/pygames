@@ -305,7 +305,7 @@ def main():
                     algoritmo_rodando = False
 
                 # --- Tecla 'H' para Busca Heurística (A*) ---
-                if event.key == pygame.K_h and inicio and fim:
+                elif event.key == pygame.K_h and inicio and fim:
                     algoritmo_rodando = True
                     for linha in grid:
                         for spot in linha:
@@ -332,13 +332,13 @@ def main():
                     algoritmo_rodando = False
 
                 # Tecla 'C' (Limpar Tabuleiro)
-                if event.key == pygame.K_c:
+                elif event.key == pygame.K_c:
                     inicio = None; fim = None
                     grid = criar_grid(LINHAS, LARGURA_JANELA)
                     pygame.display.set_caption(titulo_base)
                 
                 # Tecla 'G' (Gerar Obstáculos)
-                if event.key == pygame.K_g:
+                elif event.key == pygame.K_g:
                     if inicio and fim:
                         # Limpa obstáculos antigos antes de gerar novos
                         for row in grid:
