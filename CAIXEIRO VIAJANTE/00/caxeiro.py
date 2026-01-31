@@ -1,58 +1,76 @@
 import itertools
 
-def resolver_tsp_exato(distancias):
+def resolver_tsp_com_rota(distancias):
     n = len(distancias)
-    # memo armazena (máscara de bits das cidades visitadas, última cidade) -> custo mínimo
+    # memo agora guarda (custo, pai)
     memo = {}
 
-    # 1. Caso base: Distância da cidade 0 (ponto inicial) para cada cidade 'i'
+    # 1. Caso base: Origem (0) para cada cidade i
     for i in range(1, n):
-        # (1 << i) | 1 cria uma máscara com os bits da cidade 'i' e da cidade '0' ativos
-        memo[((1 << i) | 1, i)] = distancias[0][i]
+        memo[((1 << i) | 1, i)] = (distancias[0][i], 0)
 
-    # 2. Explorar subconjuntos de cidades de tamanho 3 até N
+    # 2. Programação Dinâmica (Held-Karp)
     for tamanho in range(2, n):
-        # Geramos combinações de cidades (excluindo a 0 que já está na máscara)
         for subset in itertools.combinations(range(1, n), tamanho):
-            # Criamos a máscara de bits para o subconjunto atual incluindo a cidade 0
             mask = 1
             for cidade in subset:
                 mask |= (1 << cidade)
             
-            # Tentamos chegar em cada cidade 'j' do subconjunto vindo de uma cidade 'k'
             for j in subset:
-                prev_mask = mask & ~(1 << j) # Removemos a cidade 'j' da máscara
+                prev_mask = mask & ~(1 << j)
                 
-                custos_possiveis = []
+                # Encontramos o melhor k (pai) que minimiza o custo até j
+                melhor_custo = float('inf')
+                melhor_pai = -1
+                
                 for k in subset:
-                    if k == j:
-                        continue
+                    if k == j: continue
                     if (prev_mask, k) in memo:
-                        custos_possiveis.append(memo[(prev_mask, k)] + distancias[k][j])
+                        custo_atual = memo[(prev_mask, k)][0] + distancias[k][j]
+                        if custo_atual < melhor_custo:
+                            melhor_custo = custo_atual
+                            melhor_pai = k
                 
-                # Guardamos o menor custo para chegar em 'j' visitando esse subconjunto
-                if custos_possiveis:
-                    memo[(mask, j)] = min(custos_possiveis)
+                if melhor_pai != -1:
+                    memo[(mask, j)] = (melhor_custo, melhor_pai)
 
-    # 3. Passo final: Adicionar o retorno à cidade de origem (0)
+    # 3. Fechamento do ciclo e busca da melhor última cidade
     full_mask = (1 << n) - 1
-    resultados_finais = []
-    
+    menor_custo_total = float('inf')
+    ultima_cidade = -1
+
     for j in range(1, n):
         if (full_mask, j) in memo:
-            # Custo de visitar tudo e parar em 'j' + custo de voltar de 'j' para 0
-            custo_total = memo[(full_mask, j)] + distancias[j][0]
-            resultados_finais.append(custo_total)
-            
-    return min(resultados_finais)
+            custo_final = memo[(full_mask, j)][0] + distancias[j][0]
+            if custo_final < menor_custo_total:
+                menor_custo_total = custo_final
+                ultima_cidade = j
 
-# Exemplo de uso com 4 cidades:
-matriz_exemplo = [
+    # 4. Reconstrução da Rota (Backtracking) 🔙
+    rota = []
+    curr_mask = full_mask
+    curr_cidade = ultima_cidade
+
+    while curr_cidade != 0:
+        rota.append(curr_cidade)
+        pai = memo[(curr_mask, curr_cidade)][1]
+        curr_mask = curr_mask & ~(1 << curr_cidade)
+        curr_cidade = pai
+    
+    rota.append(0) # Adiciona a origem
+    rota.reverse() # Inverte pois começamos do fim
+    rota.append(0) # Retorno final à origem
+
+    return menor_custo_total, rota
+
+# Teste
+matriz = [
     [0, 10, 15, 20],
     [10, 0, 35, 25],
     [15, 35, 0, 30],
     [20, 25, 30, 0]
 ]
 
-distancia_minima = resolver_tsp_exato(matriz_exemplo)
-print(f"A distância mínima exata é: {distancia_minima}")
+custo, caminho = resolver_tsp_com_rota(matriz)
+print(f"Custo: {custo}")
+print(f"Rota: {' -> '.join(map(str, caminho))}")
