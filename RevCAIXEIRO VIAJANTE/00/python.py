@@ -1,36 +1,50 @@
-def avaliar_particao(grupo_a, grupo_b):
-    """
-    Recebe dois grupos, retorna as somas de cada grupo e a diferença absoluta.
-    """
-    soma_a = sum(grupo_a)
-    soma_b = sum(grupo_b)
-    diferenca = abs(soma_a - soma_b)
-    return soma_a, soma_b, diferenca
-def gerar_particao_gulosa(numeros):
-    # 1. ORDENAR: Fundamental para a heurística gulosa (descendente)
-    numeros_ordenados = sorted(numeros, reverse=True)
+# 1. Criação do arquivo matriz.txt (Simulando a persistência)
+conteudo_matriz = """0 10 15 20
+10 0 35 25
+15 35 0 30
+20 25 30 0"""
+
+with open('matriz.txt', 'w') as f:
+    f.write(conteudo_matriz)
+
+# 2. Funções de Suporte (Baseadas na nossa revisão)
+def carregar_matriz_arquivo(nome_arquivo):
+    matriz = []
+    with open(nome_arquivo, 'r') as f:
+        for linha in f:
+            valores = [int(x) for x in linha.split()]
+            if valores:
+                matriz.append(valores)
+    return matriz
+
+def calcular_custo(rota, matriz):
+    custo = 0
+    for i in range(len(rota) - 1):
+        custo += matriz[rota[i]][rota[i+1]]
+    custo += matriz[rota[-1]][rota[0]] # Retorno à cidade de origem
+    return custo
+
+def gerar_solucao_gulosa(n_cidades, matriz, inicio=0):
+    rota = [inicio]
+    nao_visitadas = list(range(n_cidades))
+    nao_visitadas.remove(inicio)
     
-    grupo_a = []
-    grupo_b = []
-    
-    for num in numeros_ordenados:
-        # 2. DECISÃO GULOSA: Quem tem a menor soma atual recebe o número
-        if sum(grupo_a) <= sum(grupo_b):
-            grupo_a.append(num)
-        else:
-            grupo_b.append(num)
-            
-    return grupo_a, grupo_b
+    atual = inicio
+    while nao_visitadas:
+        # Fundamento #2: Escolha gulosa (vizinho mais próximo)
+        proximo = min(nao_visitadas, key=lambda cidade: matriz[atual][cidade])
+        rota.append(proximo)
+        nao_visitadas.remove(proximo)
+        atual = proximo
+    return rota
 
-# --- TESTE PRÁTICO ---
-# Supondo os números do arquivo numeros.txt: [10, 20, 30, 40, 50, 15, 25]
-dados = [10, 20, 30, 40, 50, 15, 25]
+# 3. Execução do Fluxo
+matriz = carregar_matriz_arquivo('matriz.txt')
+n = len(matriz)
 
-g_a, g_b = gerar_particao_gulosa(dados)
-s_a, s_b, diff = avaliar_particao(g_a, g_b)
+rota_final = gerar_solucao_gulosa(n, matriz)
+custo_total = calcular_custo(rota_final, matriz)
 
-print(f"Números originais: {dados}")
-print("-" * 30)
-print(f"Grupo A (Guloso): {g_a} | Soma: {s_a}")
-print(f"Grupo B (Guloso): {g_b} | Soma: {s_b}")
-print(f"Diferença Final: {diff}")
+print(f"--- Processamento do TSP ---")
+print(f"Caminho encontrado: {rota_final}")
+print(f"Custo total da rota: {custo_total}")
