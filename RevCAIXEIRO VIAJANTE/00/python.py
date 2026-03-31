@@ -1,6 +1,10 @@
+from pathlib import Path
+
+
 def carregar_matriz_arquivo(nome_arquivo):
     matriz = []
-    with open(nome_arquivo, 'r') as f:
+    caminho_arquivo = Path(__file__).resolve().parent / nome_arquivo
+    with open(caminho_arquivo, 'r') as f:
         for linha in f:
             valores = [int(x) for x in linha.split()]
             if valores: matriz.append(valores)
