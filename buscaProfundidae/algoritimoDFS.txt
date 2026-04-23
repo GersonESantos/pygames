@@ -1,0 +1,20 @@
+DFS(G)
+1  for cada vértice u ∈ G.V
+2       u.cor = BRANCO
+3       u.π = NULO
+4  tempo = 0
+5  for cada vértice u ∈ G.V
+6       if u.cor == BRANCO
+7            DFS-VISIT(G, u)
+
+DFS-VISIT(G, u)
+1  tempo = tempo + 1        // vértice u acaba de ser descoberto
+2  u.d = tempo
+3  u.cor = CINZA
+4  for cada v ∈ G.Adj[u]    // explorar aresta (u, v)
+5       if v.cor == BRANCO
+6            v.π = u
+7            DFS-VISIT(G, v)
+8  u.cor = PRETO            // u foi finalizado
+9  tempo = tempo + 1
+10 u.f = tempo

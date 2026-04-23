@@ -55,32 +55,33 @@ def dfs_visual(grafo_dict, fonte):
                 desenhar(f"Aresta ({u}->{v}) é FORWARD/CROSS")
 
         tempo += 1
-        # ALTERAÇÃO AQUI: Cinza médio/claro em vez do chumbo escuro
         cores[u] = "darkgray" 
         desenhar(f"DFS: Finalizando {u}")
 
     desenhar("Grafo Inicial - Clique para iniciar")
     
-    # Inicia a busca
+    # Inicia a busca pela nova fonte 'a' (antigo 'u')
     dfs_visit(fonte)
     
-    # Garante que visita nós desconexos (como w e z)
+    # Garante que visita nós desconexos
     for node in sorted(G.nodes()):
         if cores[node] == "white":
             dfs_visit(node)
 
     plt.ioff()
-    plt.title("DFS Concluída! Tons de cinza ajustados.")
+    plt.title("DFS Concluída! Vértices renomeados (a, b, c, d, e, f).")
     plt.show(block=True)
 
+# Grafo com as letras trocadas conforme solicitado
 grafo_dfs = {
-    'u': ['v', 'x'],
-    'v': ['y'],
-    'w': ['y', 'z'],
-    'x': ['v'],
-    'y': ['x'],
-    'z': ['z']
+    'a': ['b', 'd'], # u -> v, x
+    'b': ['e'],      # v -> y
+    'c': ['e', 'f'], # w -> y, z
+    'd': ['b'],      # x -> v
+    'e': ['d'],      # y -> x
+    'f': ['f']       # z -> z
 }
 
 if __name__ == "__main__":
-    dfs_visual(grafo_dfs, 'u')
+    # Iniciando por 'a' (que era o 'u')
+    dfs_visual(grafo_dfs, 'a')
