@@ -1,0 +1,17 @@
+BuscaEmLargura
+   escolha uma raiz s de G
+   marque s
+   insira s em F
+   enquanto F não está vazia faça
+      seja v o primeiro vértice de F
+      para cada w ∈ listaDeAdjacência de v faça
+         se w não está marcado então
+            visite aresta entre v e w
+            marque w
+            insira w em F
+         senao se w ∈ F entao
+            visite aresta entre v e w
+         fim se
+      fim para
+      retira v de F
+   fim enquanto
