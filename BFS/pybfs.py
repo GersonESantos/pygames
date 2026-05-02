@@ -22,8 +22,9 @@ def bfs_visual(grafo_dict, fonte):
         ax.clear()
         lista_cores_nos = [cores[node] for node in G.nodes()]
         lista_cores_arestas = [cores_arestas[edge] for edge in G.edges()]
+        labels = {node: node.upper() for node in G.nodes()}
         
-        nx.draw(G, pos, with_labels=True, 
+        nx.draw(G, pos, labels=labels, 
                 node_color=lista_cores_nos, 
                 node_size=1200, 
                 edge_color=lista_cores_arestas, 
@@ -75,13 +76,13 @@ def bfs_visual(grafo_dict, fonte):
 
 # Grafo com nomes trocados (a, b, c, d, e, f)
 # Mapeamento do grafo da imagem (Não Dirigido)
-grafo_imagem = {
-    'A': ['B', 'C', 'D'], # A se conecta com B, C e D
-    'B': ['A', 'E'],      # B se conecta com A e E
-    'C': ['A', 'F'],      # C se conecta com A e F
-    'D': ['A'],           # D se conecta apenas com A
-    'E': ['B'],           # E se conecta apenas com B
-    'F': ['C']            # F se conecta apenas com C
+grafo_bfs = {
+    'a': ['b', 'c', 'd'], # a se conecta com b, c e d
+    'b': ['a', 'e'],      # b se conecta com a e e
+    'c': ['a', 'f'],      # c se conecta com a e f
+    'd': ['a'],           # d se conecta apenas com a
+    'e': ['b'],           # e se conecta apenas com b
+    'f': ['c']            # f se conecta apenas com c
 }
 
 if __name__ == "__main__":
