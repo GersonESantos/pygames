@@ -1,0 +1,20 @@
+
+BFS(G,s)
+1  for cada vértice u∈V[G] - {s}
+2       u.cor = BRANCO
+3       u.d = ∞
+4       u.π = NULO
+5  s.cor = CINZA
+6  s.d = 0
+7  s.π = NULO
+8  Q = ∅
+9  ENFILERAR(Q, s)
+10 while Q ≠ ∅ 
+11      u = DESENFILERAR(Q)
+12      for cada v = G.Adj[u]
+13           if v.cor == BRANCO
+14                v.cor = CINZA
+15                v.d = u.d + 1
+16                v.π = u
+17                ENFILERAR(Q, v)
+18      u.cor = PRETO
